@@ -1,3 +1,4 @@
+#import required libraries here ..
 from django.shortcuts import render
 from .forms import DataForm
 from urllib.parse import urlencode, urlparse, parse_qs
@@ -10,8 +11,7 @@ import random
 import re, math
 from collections import Counter
 
-
-
+# choosing random user-agent so that search do not block us..
 browsers = [
             'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.6) Gecko/2009011913 Firefox/3.0.6',
             'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.5; en-US; rv:1.9.0.6) Gecko/2009011912 Firefox/3.0.6',
@@ -29,6 +29,10 @@ browsers = [
             'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
             'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:57.0) Gecko/20100101 Firefox/57.0',
             ]
+
+
+
+# calulating the cosine similarity between the input files here..
 
 WORD = re.compile(r'\w+')
 headers={
@@ -65,14 +69,14 @@ def calplag(file1_data,file2_data):
 
 
 
-
+# DataExtraction from the scrapped url takes place here..
 def dataextract(urllist,textss):
     f = open('file1.txt','w')
     f.truncate()
     f.close()
     toplist = urllist[:1]
     for l in toplist:
-        
+
         print(l)
         if (l!='/' and len(l)>2):
             html = get('http://%s'%(l),verify = False,headers = headers).text
@@ -103,14 +107,36 @@ def dataextract(urllist,textss):
     return similarity_ratio
 
 
+#Extracting the urllist for the given input
+#scrapping google if google blocks us we are jumping to ask.com
 def geturls(req,text):
     urllist = []
     abstractlist = []
     list3 = []
 
+    # here we are scraping from google
+    raw = get("https://www.google.com/search?q=%s"%(text),headers = headers,verify=False).text
+    page = fromstring(raw)
+    for result in page.cssselect(".r a"):
+        url = result.get("href")
+        if url.startswith("/url?"):
+            url = parse_qs(urlparse(url).query)['q']
+        print(url[0])
+
+        urllist.append(url[0].strip('https://'))
+    soup = BeautifulSoup(raw, "lxml")
+
+    for s in soup.findAll('span', {'class': 'st'}):
+        print(s.text)
+        abstractlist.append(s.text)
+        list3 = list(zip(urllist,abstractlist))
+    result = dataextract(urllist,text)
+    print(list3)
+    print('\n\n\n\nscrapped from google')
 
 
 
+    #if google blocks us we use ask.com
     if not list3:
         raw = get("http://www.ask.com/web?q=%s&o=0&qo=homepageSearchBox"%(text),headers = headers,verify = False).text
         soup = BeautifulSoup(raw,'lxml')
@@ -133,7 +159,7 @@ def geturls(req,text):
 
     return render(req,'plag.html',{'links':list3,'result':result*100})
 
-# Create your views here.
+# This is where we get the form data
 def check(request):
     if request.method == "POST":
         form = DataForm(request.POST)

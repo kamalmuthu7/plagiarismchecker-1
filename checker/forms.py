@@ -5,5 +5,4 @@ class DataForm(forms.ModelForm):
 
 	class Meta:
 		model = Data
-
-		fields = ('data','doc')
+		fields = ('data',)
