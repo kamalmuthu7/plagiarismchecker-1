@@ -66,6 +66,6 @@ Please read [CONTRIBUTING.md](https://github.com/syedsiddhiqq/plagiarismchecker/
 
 ## Authors
 
-* **Syed Ali** - *Initial work* - [Techarena](https://github.com/syedsiddhiqq)
-
-See also the list of [contributors](https://github.com/syedsiddhiqq/contributors) who participated in this project.
+* **Syed Ali**
+* **Sivaramakrishnan**
+* **Yashwanth**
