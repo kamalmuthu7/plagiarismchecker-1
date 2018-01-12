@@ -64,8 +64,7 @@ Please read [CONTRIBUTING.md](https://github.com/syedsiddhiqq/plagiarismchecker/
 
 
 
-## Authors
+## Author
 
 * **Syed Ali**
-* **Sivaramakrishnan**
-* **Yashwanth**
+
